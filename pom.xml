@@ -8,5 +8,31 @@
     <artifactId>com.molina.cvmfs.client</artifactId>
     <version>0.0.1</version>
 
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>bintray</name>
+            <url>http://jcenter.bintray.com</url>
+        </repository>
+        <repository>
+            <id>opencage-releases</id>
+            <url>https://raw.github.com/netcombne/mavenrepo/master/releases</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>net.fusejna</groupId>
+            <artifactId>fuse-jna</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+    </dependencies>
+
 
 </project>
