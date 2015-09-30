@@ -1,19 +1,30 @@
 package com.molina.cvmfs.client;
 
+import com.molina.cvmfs.repository.Repository;
 import net.fusejna.*;
-import net.fusejna.types.TypeMode;
 import net.fusejna.util.FuseFilesystemAdapterFull;
 
 import java.nio.ByteBuffer;
 
 /**
  * @author Jose Molina Colmenero
+ *
+ * This interface cannot handle inodes, so some operations are not
+ * identical to the original CernVM-FS. Concretely lookup and forget functions
+ * are not supported
  */
 public class CvmfsFileSystem extends FuseFilesystemAdapterFull {
 
-    private com.molina.cvmfs.repository.Repository repository;
+    private Repository repository;
+    private String cachePath;
 
-    public CvmfsFileSystem
+    public CvmfsFileSystem(String cachePath) {
+        this.cachePath = cachePath;
+    }
+
+    public CvmfsFileSystem() {
+        this.cachePath = "~/.cvmfs-java-cache";
+    }
 
 
     public FuseFilesystem log() {
@@ -25,25 +36,9 @@ public class CvmfsFileSystem extends FuseFilesystemAdapterFull {
         return ErrorCodes.EROFS();
     }
 
-
     @Override
-    public int access(String s, int i) {
-        return 0;
-    }
+    public void init() {
 
-    @Override
-    public int chmod(String s, TypeMode.ModeWrapper modeWrapper) {
-        return 0;
-    }
-
-    @Override
-    public int chown(String s, long l, long l1) {
-        return 0;
-    }
-
-    @Override
-    public int create(String s, TypeMode.ModeWrapper modeWrapper, StructFuseFileInfo.FileInfoWrapper fileInfoWrapper) {
-        return 0;
     }
 
     @Override
@@ -52,168 +47,60 @@ public class CvmfsFileSystem extends FuseFilesystemAdapterFull {
     }
 
     @Override
-    public int fgetattr(String s, StructStat.StatWrapper statWrapper, StructFuseFileInfo.FileInfoWrapper fileInfoWrapper) {
+    public int getattr(String path, StructStat.StatWrapper stat) {
         return 0;
     }
 
     @Override
-    public int flush(String s, StructFuseFileInfo.FileInfoWrapper fileInfoWrapper) {
+    public int readlink(String path, ByteBuffer buffer, long size) {
         return 0;
     }
 
     @Override
-    public int fsync(String s, int i, StructFuseFileInfo.FileInfoWrapper fileInfoWrapper) {
+    public int open(String path, StructFuseFileInfo.FileInfoWrapper info) {
         return 0;
     }
 
     @Override
-    public int fsyncdir(String s, int i, StructFuseFileInfo.FileInfoWrapper fileInfoWrapper) {
+    public int read(String path, ByteBuffer buffer, long size, long offset, StructFuseFileInfo.FileInfoWrapper info) {
         return 0;
     }
 
     @Override
-    public int ftruncate(String s, long l, StructFuseFileInfo.FileInfoWrapper fileInfoWrapper) {
+    public int release(String path, StructFuseFileInfo.FileInfoWrapper info) {
         return 0;
     }
 
     @Override
-    public int getattr(String s, StructStat.StatWrapper statWrapper) {
-        // TODO
+    public int opendir(String path, StructFuseFileInfo.FileInfoWrapper info) {
         return 0;
     }
 
     @Override
-    protected String getName() {
-        return null;
-    }
-
-    @Override
-    protected String[] getOptions() {
-        return new String[0];
-    }
-
-    @Override
-    public int getxattr(String s, String s1, XattrFiller xattrFiller, long l, long l1) {
+    public int readdir(String path, DirectoryFiller filler) {
         return 0;
     }
 
     @Override
-    public void init() {
-
-    }
-
-    @Override
-    public int link(String s, String s1) {
+    public int releasedir(String path, StructFuseFileInfo.FileInfoWrapper info) {
         return 0;
     }
 
     @Override
-    public int listxattr(String s, XattrListFiller xattrListFiller) {
+    public int statfs(String path, StructStatvfs.StatvfsWrapper wrapper) {
         return 0;
     }
 
     @Override
-    public int lock(String s, StructFuseFileInfo.FileInfoWrapper fileInfoWrapper, FlockCommand flockCommand, StructFlock.FlockWrapper flockWrapper) {
-        return 0;
+    public int getxattr(String path, String xattr, XattrFiller filler, long size, long position) {
+        // NOTE: not handle at the moment
+        return super.getxattr(path, xattr, filler, size, position);
     }
 
     @Override
-    public int mkdir(String s, TypeMode.ModeWrapper modeWrapper) {
-        return 0;
+    public int listxattr(String path, XattrListFiller filler) {
+        // NOTE: not handle at the moment
+        return super.listxattr(path, filler);
     }
 
-    @Override
-    public int mknod(String s, TypeMode.ModeWrapper modeWrapper, long l) {
-        return 0;
-    }
-
-    @Override
-    public int open(String s, StructFuseFileInfo.FileInfoWrapper fileInfoWrapper) {
-        if(fileInfoWrapper.openMode().equals(StructFuseFileInfo.FileInfoWrapper.OpenMode.READONLY)) {
-
-        }
-        return 0;
-    }
-
-    @Override
-    public int opendir(String s, StructFuseFileInfo.FileInfoWrapper fileInfoWrapper) {
-        return 0;
-    }
-
-    @Override
-    public int read(String s, ByteBuffer byteBuffer, long l, long l1, StructFuseFileInfo.FileInfoWrapper fileInfoWrapper) {
-        return 0;
-    }
-
-    @Override
-    public int readdir(String s, DirectoryFiller directoryFiller) {
-        // TODO
-        return 0;
-    }
-
-    @Override
-    public int readlink(String s, ByteBuffer byteBuffer, long l) {
-        // TODO
-        return 0;
-    }
-
-    @Override
-    public int release(String s, StructFuseFileInfo.FileInfoWrapper fileInfoWrapper) {
-        return 0;
-    }
-
-    @Override
-    public int releasedir(String s, StructFuseFileInfo.FileInfoWrapper fileInfoWrapper) {
-        return 0;
-    }
-
-    @Override
-    public int removexattr(String s, String s1) {
-        return 0;
-    }
-
-    @Override
-    public int rename(String s, String s1) {
-        return 0;
-    }
-
-    @Override
-    public int rmdir(String s) {
-        return 0;
-    }
-
-    @Override
-    public int setxattr(String s, String s1, ByteBuffer byteBuffer, long l, int i, int i1) {
-        return 0;
-    }
-
-    @Override
-    public int statfs(String s, StructStatvfs.StatvfsWrapper statvfsWrapper) {
-        return 0;
-    }
-
-    @Override
-    public int symlink(String s, String s1) {
-        return 0;
-    }
-
-    @Override
-    public int truncate(String s, long l) {
-        return 0;
-    }
-
-    @Override
-    public int unlink(String s) {
-        return 0;
-    }
-
-    @Override
-    public int utimens(String s, StructTimeBuffer.TimeBufferWrapper timeBufferWrapper) {
-        return 0;
-    }
-
-    @Override
-    public int write(String s, ByteBuffer byteBuffer, long l, long l1, StructFuseFileInfo.FileInfoWrapper fileInfoWrapper) {
-        return 0;
-    }
 }
