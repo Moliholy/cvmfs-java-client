@@ -10,8 +10,12 @@ import java.io.File;
 public class LaunchFS {
 
     public static void main(String[] args) throws FuseException {
-        String repoUrl = args[1];
-        String mountpoint = args[2];
+        if (args.length < 2) {
+            System.err.println("Please specify url of the repository " +
+                    "and the mount point");
+        }
+        String repoUrl = args[0];
+        String mountpoint = args[1];
         String repoCache = "/tmp/cvmfs-java-client-cache";
         if (args.length > 2)
             repoCache = args[2];
