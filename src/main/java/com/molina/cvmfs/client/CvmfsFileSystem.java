@@ -36,15 +36,6 @@ public class CvmfsFileSystem extends FuseFilesystemAdapterFull {
         this.url = url;
     }
 
-    public CvmfsFileSystem() {
-        this.cachePath = "~/.cvmfs-java-cache";
-    }
-
-    private int printIlegalOperationMessage() {
-        System.err.println("Read-only file system!");
-        return ErrorCodes.EROFS();
-    }
-
     @Override
     public void init() {
         openedFiles = new HashMap<String, FileInputStream>();
