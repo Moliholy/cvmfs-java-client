@@ -14,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,6 +35,7 @@ public class CvmfsFileSystem extends FuseFilesystemAdapterFull {
     public CvmfsFileSystem(String url, String cachePath) {
         this.cachePath = cachePath;
         this.url = url;
+        log(true);
     }
 
     @Override
@@ -52,7 +54,6 @@ public class CvmfsFileSystem extends FuseFilesystemAdapterFull {
         }
         if (repository == null)
             System.exit(-1);
-        log(true);
     }
 
     @Override
@@ -157,6 +158,10 @@ public class CvmfsFileSystem extends FuseFilesystemAdapterFull {
         DirectoryEntry result = repository.lookup(path);
         if (result != null) {
             if (result.isDirectory()) {
+                List<DirectoryEntry> entries = repository.listDirectory(path);
+                for (DirectoryEntry dirent : entries) {
+                    filler.add(dirent.getName());
+                }
                 return 0;
             } else {
                 return ErrorCodes.ENOTDIR();
