@@ -111,8 +111,6 @@ public class CvmfsFileSystem extends FuseFilesystemAdapterFull {
                     ErrorCodes.ENOENT();
                 }
                 return 0;
-            } else {
-                return ErrorCodes.ENOENT();
             }
         }
         return ErrorCodes.ENOENT();
@@ -125,11 +123,13 @@ public class CvmfsFileSystem extends FuseFilesystemAdapterFull {
         if (fis != null) {
             int sizeInt = new Long(size).intValue();
             byte[] bytes = new byte[sizeInt];
+            buffer.limit((int) size);
             try {
                 int bytesRead = fis.read(bytes, ((int) offset), sizeInt);
                 if (bytesRead == sizeInt) {
-                    buffer.put(bytes);
-                    return 0;
+                    buffer.put(bytes, 0, bytesRead);
+                    info.flush();
+                    return bytesRead;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
