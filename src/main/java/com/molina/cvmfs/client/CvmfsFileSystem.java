@@ -166,9 +166,8 @@ public class CvmfsFileSystem extends FuseFilesystemAdapterFull {
             } else {
                 return ErrorCodes.ENOTDIR();
             }
-        } else {
-            return ErrorCodes.ENOENT();
         }
+        return ErrorCodes.ENOENT();
     }
 
     @Override
