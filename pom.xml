@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cvmfs-java-client</groupId>
-    <artifactId>com.molina.cvmfs.client</artifactId>
+    <artifactId>cvmfs-java-client</artifactId>
     <version>0.0.1</version>
 
     <repositories>

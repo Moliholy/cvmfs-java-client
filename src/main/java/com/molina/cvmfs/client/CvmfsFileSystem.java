@@ -4,6 +4,8 @@ import com.molina.cvmfs.directoryentry.DirectoryEntry;
 import com.molina.cvmfs.repository.Repository;
 import com.molina.cvmfs.repository.exception.CacheDirectoryNotFound;
 import com.molina.cvmfs.repository.exception.FailedToLoadSourceException;
+import com.molina.cvmfs.repository.exception.RepositoryNotFoundException;
+import com.molina.cvmfs.revision.Revision;
 import com.molina.cvmfs.rootfile.exception.RootFileException;
 import net.fusejna.*;
 import net.fusejna.util.FuseFilesystemAdapterFull;
@@ -27,6 +29,7 @@ import java.util.Map;
 public class CvmfsFileSystem extends FuseFilesystemAdapterFull {
 
     private Repository repository;
+    private Revision currentRevision;
     private String cachePath;
     private String url;
 
@@ -51,9 +54,12 @@ public class CvmfsFileSystem extends FuseFilesystemAdapterFull {
             cacheDirectoryNotFound.printStackTrace();
         } catch (RootFileException e) {
             e.printStackTrace();
+        } catch (RepositoryNotFoundException e) {
+            e.printStackTrace();
         }
         if (repository == null)
             System.exit(-1);
+        currentRevision = repository.getCurrentRevision();
     }
 
     @Override
@@ -62,7 +68,7 @@ public class CvmfsFileSystem extends FuseFilesystemAdapterFull {
 
     @Override
     public int getattr(String path, StructStat.StatWrapper stat) {
-        DirectoryEntry result = repository.lookup(path);
+        DirectoryEntry result = currentRevision.lookup(path);
         if (result != null) {
             stat
                     .dev(1).rdev(1)
@@ -80,7 +86,7 @@ public class CvmfsFileSystem extends FuseFilesystemAdapterFull {
 
     @Override
     public int readlink(String path, ByteBuffer buffer, long size) {
-        DirectoryEntry result = repository.lookup(path, false);
+        DirectoryEntry result = currentRevision.lookup(path);
         if (result != null) {
             if (result.isSymplink()) {
                 buffer.put(result.getSymlink().getBytes());
@@ -94,7 +100,7 @@ public class CvmfsFileSystem extends FuseFilesystemAdapterFull {
 
     @Override
     public int open(String path, StructFuseFileInfo.FileInfoWrapper info) {
-        File result = repository.getFile(path);
+        File result = currentRevision.getFile(path);
         if (result != null) {
             if (result.isFile()) {
                 try {
@@ -155,10 +161,10 @@ public class CvmfsFileSystem extends FuseFilesystemAdapterFull {
 
     @Override
     public int readdir(String path, DirectoryFiller filler) {
-        DirectoryEntry result = repository.lookup(path);
+        DirectoryEntry result = currentRevision.lookup(path);
         if (result != null) {
             if (result.isDirectory()) {
-                List<DirectoryEntry> entries = repository.listDirectory(path);
+                List<DirectoryEntry> entries = currentRevision.listDirectory(path);
                 for (DirectoryEntry dirent : entries) {
                     filler.add(dirent.getName());
                 }
