@@ -38,7 +38,7 @@ public class CvmfsFileSystem extends FuseFilesystemAdapterFull {
     public CvmfsFileSystem(String url, String cachePath) {
         this.cachePath = cachePath;
         this.url = url;
-        log(true);
+        log(false);
     }
 
     @Override
@@ -111,10 +111,10 @@ public class CvmfsFileSystem extends FuseFilesystemAdapterFull {
                             .fh(fis.getFD().hashCode());
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
-                    ErrorCodes.ENOENT();
+                    return ErrorCodes.ENOENT();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    ErrorCodes.ENOENT();
+                    return ErrorCodes.ENOENT();
                 }
                 return 0;
             }
